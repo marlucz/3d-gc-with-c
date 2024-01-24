@@ -1,5 +1,5 @@
-all:
-	gcc -Wall -std=c99 -ISDL2/include -LSDL2/lib ./src/*.c -o renderer -lmingw32 -lSDL2main -lSDL2 -mwindows
+build:
+	gcc -Wall -std=c99 -ISDL2/include -LSDL2/lib ./src/*.c -lmingw32 -lSDL2main -lSDL2 -mwindows -o renderer
 
 run:
 	./renderer
