@@ -1,10 +1,15 @@
 #include <SDL2/SDL.h>
 #include <stdbool.h>
+#include <stdint.h>
 #include <stdio.h>
 
 bool is_running = false;
 SDL_Window *window = NULL;
 SDL_Renderer *renderer = NULL;
+
+uint32_t *color_buffer = NULL;
+int window_width = 800;
+int window_height = 600;
 
 bool initialize_window(void) {
   if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
@@ -15,8 +20,8 @@ bool initialize_window(void) {
   window = SDL_CreateWindow(NULL,                    // Window title
                             SDL_WINDOWPOS_CENTERED,  // x position
                             SDL_WINDOWPOS_CENTERED,  // y position
-                            800,                     // Window width
-                            600,                     // Window height
+                            window_width,            // Window width
+                            window_height,           // Window height
                             SDL_WINDOW_BORDERLESS    // no window decoration
   );
   if (!window) {
@@ -34,7 +39,10 @@ bool initialize_window(void) {
   return true;
 }
 
-void setup(void) {}
+void setup(void) {
+  color_buffer =
+      (uint32_t *)malloc(sizeof(uint32_t) * window_width * window_height);
+}
 
 void process_input(void) {
   SDL_Event event;
@@ -59,6 +67,13 @@ void render(void) {
   SDL_RenderPresent(renderer);
 }
 
+void destroy_window(void) {
+  free(color_buffer);  // free memory, free is opposite of malloc
+  SDL_DestroyRenderer(renderer);
+  SDL_DestroyWindow(window);
+  SDL_Quit();  // opposite to SDL_Init
+}
+
 int main(int argc, char *argv[]) {
   is_running = initialize_window();
 
@@ -70,6 +85,8 @@ int main(int argc, char *argv[]) {
     update();
     render();
   }
+
+  destroy_window();
 
   return 0;
 }
