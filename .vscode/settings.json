@@ -1,3 +1,17 @@
 {
-  "C_Cpp.default.compilerPath": "C:\\msys64\\ucrt64\\bin\\gcc.exe"
+  "C_Cpp.default.compilerPath": "C:\\msys64\\ucrt64\\bin\\gcc.exe",
+  "C_Cpp.vcFormat.newLine.beforeOpenBrace.block": "ignore",
+  "C_Cpp.vcFormat.newLine.beforeOpenBrace.function": "ignore",
+  "C_Cpp.vcFormat.newLine.beforeOpenBrace.lambda": "ignore",
+  "C_Cpp.vcFormat.newLine.beforeOpenBrace.namespace": "ignore",
+  "C_Cpp.vcFormat.newLine.beforeOpenBrace.type": "ignore",
+  "C_Cpp.vcFormat.newLine.closeBraceSameLine.emptyFunction": true,
+  "C_Cpp.vcFormat.newLine.closeBraceSameLine.emptyType": true,
+  "C_Cpp.clang_format_style": "Google",
+  "C_Cpp.clang_format_fallbackStyle": "Google",
+  "C_Cpp.vcFormat.indent.withinParentheses": "alignToParenthesis",
+  "C_Cpp.vcFormat.indent.namespaceContents": true,
+  "C_Cpp.vcFormat.indent.multiLineRelativeTo": "innermostParenthesis",
+  "C_Cpp.vcFormat.indent.lambdaBracesWhenParameter": false,
+  "C_Cpp.vcFormat.indent.braces": false
 }
