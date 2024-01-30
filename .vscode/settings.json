@@ -13,5 +13,9 @@
   "C_Cpp.vcFormat.indent.namespaceContents": true,
   "C_Cpp.vcFormat.indent.multiLineRelativeTo": "innermostParenthesis",
   "C_Cpp.vcFormat.indent.lambdaBracesWhenParameter": false,
-  "C_Cpp.vcFormat.indent.braces": false
+  "C_Cpp.vcFormat.indent.braces": false,
+  "files.associations": {
+    "sdl.h": "c",
+    "stdio.h": "c"
+  }
 }
