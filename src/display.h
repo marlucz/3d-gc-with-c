@@ -5,13 +5,17 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+// extern means that this is external variable defined in the implementation
+// (display.c)
 extern SDL_Window *window;
 extern SDL_Renderer *renderer;
-extern uint32_t *color_buffer;
+extern uint32_t *color_buffer;  // -> uint32_t means that element should be of
+                                // length 32bits (4 bytes)
 extern SDL_Texture *color_buffer_texture;
 extern int window_width;
 extern int window_height;
 
+// declarations for which implementations are in .c files
 bool initialize_window(void);
 void draw_grid();
 void draw_pixel(int x, int y, uint32_t color);
