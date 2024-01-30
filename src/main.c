@@ -1,6 +1,10 @@
 #include "display.h"
 #include "vector.h"
 
+// declare an array of vectors/points
+const int M_POINTS = 9 * 9 * 0;
+vec3_t cube_points[M_POINTS];  // 9x9x9 cube
+
 bool is_running = false;
 
 void setup(void) {
@@ -12,6 +16,19 @@ void setup(void) {
   color_buffer_texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888,
                                            SDL_TEXTUREACCESS_STREAMING,
                                            window_width, window_height);
+
+  // start loading my array of vectors
+  // from -1 to 1 (in this 9x9x9 cube)
+  int point_count = 0;
+  for (float x = -1; x <= 1; x += 0.25) {
+    for (float y = -1; y <= 1; y += 0.25) {
+      for (float z = -1; z <= 1; z += 0.25) {
+        vec3_t new_point = {
+            .x = x, .y = y, .z = z};  // for the specific field .x assign value
+        cube_points[point_count++] = new_point;
+      }
+    }
+  }
 }
 
 void process_input(void) {
@@ -47,8 +64,6 @@ int main(int argc, char *argv[]) {
   is_running = initialize_window();
 
   setup();
-
-  vec3_t myvector = {2.0, 3.0, -4.0};
 
   // game loop
   while (is_running) {
