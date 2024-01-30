@@ -63,14 +63,24 @@ void draw_pixel(int x, int y, uint32_t color) {
 }
 
 void draw_rect(int xCoord, int yCoord, int width, int height, uint32_t color) {
-  for (int y = 0; y < window_height; y++) {
-    for (int x = 0; x < window_width; x++) {
-      if (y >= yCoord && y <= (yCoord + height) &&
-          (x >= xCoord && x <= (xCoord + width))) {
-        color_buffer[(window_width * y) + x] = color;
-      }
+  // more performant way to draw rect as it's not looping over every pixel
+  // calculations here just starts from the initial coordinates of the rect
+  // and fill every pixel with color until rect's width and height are met
+  for (int i = 0; i < width; i++) {
+    for (int j = 0; j < height; j++) {
+      int current_x = xCoord + i;
+      int current_y = yCoord + j;
+      draw_pixel(current_x, current_y, color);
     }
   }
+  // for (int y = 0; y < window_height; y++) {
+  //   for (int x = 0; x < window_width; x++) {
+  //     if (y >= yCoord && y <= (yCoord + height) &&
+  //         (x >= xCoord && x <= (xCoord + width))) {
+  //       color_buffer[(window_width * y) + x] = color;
+  //     }
+  //   }
+  // }
 }
 
 void render_color_buffer(void) {
