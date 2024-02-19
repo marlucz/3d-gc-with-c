@@ -63,9 +63,18 @@ vec2_t project(vec3_t point) {
 
 void update(void) {
   // lock the update execution unless we hit frame target time since last frame
-  while (!SDL_TICKS_PASSED(SDL_GetTicks(),
-                           previous_frame_time + FRAME_TARGET_TIME))
-    ;
+  // DO NOT USE WHILE LOOPS FOR THAT - IT BLOCKS 100% CPU USAGE
+  // while (!SDL_TICKS_PASSED(SDL_GetTicks(),
+  //                          previous_frame_time + FRAME_TARGET_TIME))
+  //   ;
+
+  // do the SDL_Delay instead
+
+  int time_to_wait = FRAME_TARGET_TIME - (SDL_GetTicks() - previous_frame_time);
+
+  if (time_to_wait > 0 && time_to_wait <= FRAME_TARGET_TIME) {
+    SDL_Delay(time_to_wait);
+  }
 
   previous_frame_time = SDL_GetTicks();
 
