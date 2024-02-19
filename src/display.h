@@ -5,12 +5,16 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+#define FPS 30
+// how many ms each frame will take
+#define FRAME_TARGET_TIME (1000 / FPS)
+
 // extern means that this is external variable defined in the implementation
 // (display.c)
 extern SDL_Window *window;
 extern SDL_Renderer *renderer;
-extern uint32_t *color_buffer;  // -> uint32_t means that element should be of
-                                // length 32bits (4 bytes)
+extern uint32_t *color_buffer; // -> uint32_t means that element should be of
+                               // length 32bits (4 bytes)
 extern SDL_Texture *color_buffer_texture;
 extern int window_width;
 extern int window_height;
