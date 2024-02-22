@@ -1,5 +1,5 @@
 #include "display.h"
-
+#include <math.h>
 #include <stdio.h>
 
 SDL_Window *window = NULL;
@@ -22,12 +22,12 @@ bool initialize_window(void) {
   window_height = display_mode.h;
 
   // Create SDL Window
-  window = SDL_CreateWindow(NULL,                    // Window title
-                            SDL_WINDOWPOS_CENTERED,  // x position
-                            SDL_WINDOWPOS_CENTERED,  // y position
-                            window_width,            // Window width
-                            window_height,           // Window height
-                            SDL_WINDOW_BORDERLESS    // no window decoration
+  window = SDL_CreateWindow(NULL,                   // Window title
+                            SDL_WINDOWPOS_CENTERED, // x position
+                            SDL_WINDOWPOS_CENTERED, // y position
+                            window_width,           // Window width
+                            window_height,          // Window height
+                            SDL_WINDOW_BORDERLESS   // no window decoration
   );
   if (!window) {
     fprintf(stderr, "Error creating SDL window.\n");
@@ -60,6 +60,36 @@ void draw_pixel(int x, int y, uint32_t color) {
   if (x >= 0 && x < window_width && y >= 0 && y < window_height) {
     color_buffer[(window_width * y) + x] = color;
   }
+}
+
+void draw_line(int x0, int y0, int x1, int y1, uint32_t color) {
+  int delta_x = (x1 - x0);
+  int delta_y = (y1 - y0);
+
+  int longest_side_length =
+      abs(delta_x) >= abs(delta_y) ? abs(delta_x) : abs(delta_y);
+
+  float inc_x =
+      delta_x / (float)longest_side_length; // cast to float as C has issues
+                                            // with dividing int by int
+  float inc_y = delta_y / (float)longest_side_length;
+
+  float current_x = x0;
+  float current_y = y0;
+
+  for (int i = 0; i < longest_side_length; i++) {
+    draw_pixel(round(current_x), round(current_y), color);
+
+    current_x += inc_x;
+    current_y += inc_y;
+  }
+}
+
+void draw_triangle(int x0, int y0, int x1, int y1, int x2, int y2,
+                   uint32_t color) {
+  draw_line(x0, y0, x1, y1, color);
+  draw_line(x1, y1, x2, y2, color);
+  draw_line(x2, y2, x0, y0, color);
 }
 
 void draw_rect(int xCoord, int yCoord, int width, int height, uint32_t color) {
@@ -97,8 +127,8 @@ void clear_color_buffer(uint32_t color) {
 }
 
 void destroy_window(void) {
-  free(color_buffer);  // free memory, free is opposite of malloc
+  free(color_buffer); // free memory, free is opposite of malloc
   SDL_DestroyRenderer(renderer);
   SDL_DestroyWindow(window);
-  SDL_Quit();  // opposite to SDL_Init
+  SDL_Quit(); // opposite to SDL_Init
 }
