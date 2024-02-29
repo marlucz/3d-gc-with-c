@@ -127,7 +127,6 @@ void clear_color_buffer(uint32_t color) {
 }
 
 void destroy_window(void) {
-  free(color_buffer); // free memory, free is opposite of malloc
   SDL_DestroyRenderer(renderer);
   SDL_DestroyWindow(window);
   SDL_Quit(); // opposite to SDL_Init
