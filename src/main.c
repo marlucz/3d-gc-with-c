@@ -23,7 +23,9 @@ void setup(void) {
                                            SDL_TEXTUREACCESS_STREAMING,
                                            window_width, window_height);
 
-  load_cube_mesh_data();
+  // Loads the cube values in the mesh data structure
+  // load_cube_mesh_data();
+  load_obj_file_data("./assets/f22.obj");
 }
 
 void process_input(void) {
@@ -71,8 +73,8 @@ void update(void) {
   triangles_to_render = NULL;
 
   mesh.rotation.x += 0.01;
-  mesh.rotation.y += 0.01;
-  mesh.rotation.z += 0.01;
+  mesh.rotation.y += 0.00;
+  mesh.rotation.z += 0.00;
 
   int num_faces = array_length(mesh.faces);
 
