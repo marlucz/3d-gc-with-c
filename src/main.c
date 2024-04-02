@@ -30,16 +30,15 @@ void setup(void) {
 
 void process_input(void) {
   SDL_Event event;
-  SDL_PollEvent(&event); // & - means a reference to the event
+  SDL_PollEvent(&event);  // & - means a reference to the event
 
   switch (event.type) {
-  case SDL_QUIT: // SDL_QUIT - user clicks on the close button
-    is_running = false;
-    break;
-  case SDL_KEYDOWN:
-    if (event.key.keysym.sym == SDLK_ESCAPE)
+    case SDL_QUIT:  // SDL_QUIT - user clicks on the close button
       is_running = false;
-    break;
+      break;
+    case SDL_KEYDOWN:
+      if (event.key.keysym.sym == SDLK_ESCAPE) is_running = false;
+      break;
   }
 }
 
@@ -84,8 +83,8 @@ void update(void) {
 
     vec3_t face_vertices[3];
     face_vertices[0] =
-        mesh.vertices[mesh_face.a - 1]; // -1 as a compensation for vertex
-                                        // indexing in the mesh_faces
+        mesh.vertices[mesh_face.a - 1];  // -1 as a compensation for vertex
+                                         // indexing in the mesh_faces
     face_vertices[1] = mesh.vertices[mesh_face.b - 1];
     face_vertices[2] = mesh.vertices[mesh_face.c - 1];
 
@@ -154,7 +153,7 @@ void render(void) {
 
 // Free the memory that was dynamically allocated by the program
 void free_resources(void) {
-  free(color_buffer); // free memory, free is opposite of malloc
+  free(color_buffer);  // free memory, free is opposite of malloc
   array_free(mesh.faces);
   array_free(mesh.vertices);
 }
