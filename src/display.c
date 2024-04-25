@@ -1,4 +1,5 @@
 #include "display.h"
+
 #include <math.h>
 #include <stdio.h>
 
@@ -8,6 +9,11 @@ uint32_t *color_buffer = NULL;
 SDL_Texture *color_buffer_texture = NULL;
 int window_width = 800;
 int window_height = 600;
+
+bool CULL_BACKFACE = true;
+bool RENDER_WIREFRAME = true;
+bool RENDER_FILL = true;
+bool RENDER_VERTICES = true;
 
 bool initialize_window(void) {
   if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
@@ -22,12 +28,12 @@ bool initialize_window(void) {
   window_height = display_mode.h;
 
   // Create SDL Window
-  window = SDL_CreateWindow(NULL,                   // Window title
-                            SDL_WINDOWPOS_CENTERED, // x position
-                            SDL_WINDOWPOS_CENTERED, // y position
-                            window_width,           // Window width
-                            window_height,          // Window height
-                            SDL_WINDOW_BORDERLESS   // no window decoration
+  window = SDL_CreateWindow(NULL,                    // Window title
+                            SDL_WINDOWPOS_CENTERED,  // x position
+                            SDL_WINDOWPOS_CENTERED,  // y position
+                            window_width,            // Window width
+                            window_height,           // Window height
+                            SDL_WINDOW_BORDERLESS    // no window decoration
   );
   if (!window) {
     fprintf(stderr, "Error creating SDL window.\n");
@@ -70,8 +76,8 @@ void draw_line(int x0, int y0, int x1, int y1, uint32_t color) {
       abs(delta_x) >= abs(delta_y) ? abs(delta_x) : abs(delta_y);
 
   float inc_x =
-      delta_x / (float)longest_side_length; // cast to float as C has issues
-                                            // with dividing int by int
+      delta_x / (float)longest_side_length;  // cast to float as C has issues
+                                             // with dividing int by int
   float inc_y = delta_y / (float)longest_side_length;
 
   float current_x = x0;
@@ -129,5 +135,5 @@ void clear_color_buffer(uint32_t color) {
 void destroy_window(void) {
   SDL_DestroyRenderer(renderer);
   SDL_DestroyWindow(window);
-  SDL_Quit(); // opposite to SDL_Init
+  SDL_Quit();  // opposite to SDL_Init
 }
