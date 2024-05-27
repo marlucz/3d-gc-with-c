@@ -8,7 +8,7 @@
 // pointer in the memory for the array of triangles that should be rendered
 triangle_t *triangles_to_render = NULL;
 
-vec3_t camera_position = {0, 0, 0};
+vec3_t camera_position = {.x = 0, .y = 0, .z = 0};
 
 float fov_factor = 640;
 
@@ -119,9 +119,9 @@ void update(void) {
     face_t mesh_face = mesh.faces[i];
 
     vec3_t face_vertices[3];
-    face_vertices[0] =
-        mesh.vertices[mesh_face.a - 1];  // -1 as a compensation for vertex
-                                         // indexing in the mesh_faces
+    // -1 as a compensation for vertex
+    // indexing in the mesh_faces
+    face_vertices[0] = mesh.vertices[mesh_face.a - 1];
     face_vertices[1] = mesh.vertices[mesh_face.b - 1];
     face_vertices[2] = mesh.vertices[mesh_face.c - 1];
 
@@ -135,8 +135,8 @@ void update(void) {
       transformed_vertex = vec3_rotate_y(transformed_vertex, mesh.rotation.y);
       transformed_vertex = vec3_rotate_z(transformed_vertex, mesh.rotation.z);
 
-      // Translate the vertex away from camera in z
-      transformed_vertex.z += -5;
+      // Translate the vertices away from the camera in z direction
+      transformed_vertex.z += 5;
 
       // save transformed vertex in the array of transformed vertices;
       transformed_vertices[j] = transformed_vertex;
@@ -150,13 +150,13 @@ void update(void) {
 
       // Get the vector subtraction of B-A and C-A
       vec3_t vector_ab = vec3_sub(vector_b, vector_a);
-      vec3_normalize(&vector_ab);
       vec3_t vector_ac = vec3_sub(vector_c, vector_a);
+      vec3_normalize(&vector_ab);
       vec3_normalize(&vector_ac);
 
-      // Compute the face normal (using cross product to find perpendicular)
+      // Compute and normalize the face normal (using cross product to find
+      // perpendicular)
       vec3_t normal = vec3_cross(vector_ab, vector_ac);
-      // Normalize the face normal vector
       vec3_normalize(
           &normal);  // & means we're passing a memory reference to that value
                      // so every operation is done directly on the ref
@@ -182,9 +182,15 @@ void update(void) {
       projected_points[j] = project(transformed_vertices[j]);
 
       // Scale and translate the projected points to the middle of the screen
-      projected_points[j].x += window_width / 2;
-      projected_points[j].y += window_height / 2;
+      projected_points[j].x += (window_width / 2);
+      projected_points[j].y += (window_height / 2);
     }
+
+    // Calculate the average depth for each face based on the vertices after
+    // transformation
+    float avg_depth = (transformed_vertices[0].z + transformed_vertices[1].z +
+                       transformed_vertices[2].z) /
+                      3.0;
 
     triangle_t projected_triangle = {
         .points =
@@ -193,11 +199,25 @@ void update(void) {
                 {projected_points[1].x, projected_points[1].y},
                 {projected_points[2].x, projected_points[2].y},
             },
-        .color = mesh_face.color};
+        .color = mesh_face.color,
+        .avg_depth = avg_depth};
 
     // Save the projected triangle in the array of triangles to render
     // triangles_to_render[i] = projected_triangle;
     array_push(triangles_to_render, projected_triangle);
+  }
+
+  // Sort triangles by their average z-depth value
+  int num_triangles = array_length(triangles_to_render);
+  for (int i = 0; i < num_triangles; i++) {
+    for (int j = i; j < num_triangles; j++) {
+      if (triangles_to_render[i].avg_depth < triangles_to_render[j].avg_depth) {
+        // Swap the triangles position in the array
+        triangle_t temp = triangles_to_render[i];
+        triangles_to_render[i] = triangles_to_render[j];
+        triangles_to_render[j] = temp;
+      }
+    }
   }
 }
 
@@ -205,6 +225,8 @@ void render(void) {
   // removed because we render color and clear buffer by hand later
   // SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
   // SDL_RenderClear(renderer);
+
+  clear_color_buffer(0xFF151515);
 
   draw_grid();
   // draw_rect(200, 200, 500, 200, 0xFF0000FF);
@@ -216,7 +238,7 @@ void render(void) {
     triangle_t triangle = triangles_to_render[i];
 
     if (RENDER_VERTICES) {
-      float vw = 6.0;  // vertex width
+      float vw = 8.0;  // vertex width
       // Draw vertex points
       draw_rect(triangle.points[0].x - vw / 2, triangle.points[0].y - vw / 2,
                 vw, vw, 0xFFFFFF00);
@@ -241,12 +263,8 @@ void render(void) {
     }
   }
 
-  // clear the array of triangles to render every frame loop
-  array_free(triangles_to_render);
-
   render_color_buffer();
   clear_color_buffer(0xFF000000);
-
   SDL_RenderPresent(renderer);
 }
 
@@ -255,6 +273,8 @@ void free_resources(void) {
   free(color_buffer);  // free memory, free is opposite of malloc
   array_free(mesh.faces);
   array_free(mesh.vertices);
+  // clear the array of triangles to render every frame loop
+  array_free(triangles_to_render);
 }
 
 int main(int argc, char *argv[]) {

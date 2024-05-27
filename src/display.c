@@ -52,22 +52,23 @@ bool initialize_window(void) {
   return true;
 }
 
-void draw_grid() {
+void draw_grid(uint32_t color, int gap_size) {
   for (int y = 0; y < window_height; y++) {
     for (int x = 0; x < window_width; x++) {
-      if (y % 10 == 0 || x % 10 == 0) {
-        color_buffer[(window_width * y) + x] = 0xFF333333;
-      }
+      if (x % gap_size != 0 && y % gap_size != 0) continue;
+      color_buffer[window_width * y + x] = color;
     }
-  };
+  }
 }
 
 void draw_pixel(int x, int y, uint32_t color) {
   if (x >= 0 && x < window_width && y >= 0 && y < window_height) {
-    color_buffer[(window_width * y) + x] = color;
-  }
+    color_buffer[window_width * y + x] = color;
+  };
 }
 
+// DDA algorithm:
+// https://en.wikipedia.org/wiki/Digital_differential_analyzer_(graphics_algorithm)
 void draw_line(int x0, int y0, int x1, int y1, uint32_t color) {
   int delta_x = (x1 - x0);
   int delta_y = (y1 - y0);
@@ -75,19 +76,19 @@ void draw_line(int x0, int y0, int x1, int y1, uint32_t color) {
   int longest_side_length =
       abs(delta_x) >= abs(delta_y) ? abs(delta_x) : abs(delta_y);
 
-  float inc_x =
+  // Find increment in both x and y direction
+  float x_inc =
       delta_x / (float)longest_side_length;  // cast to float as C has issues
                                              // with dividing int by int
-  float inc_y = delta_y / (float)longest_side_length;
+  float y_inc = delta_y / (float)longest_side_length;
 
   float current_x = x0;
   float current_y = y0;
 
-  for (int i = 0; i < longest_side_length; i++) {
+  for (int i = 0; i <= longest_side_length; i++) {
     draw_pixel(round(current_x), round(current_y), color);
-
-    current_x += inc_x;
-    current_y += inc_y;
+    current_x += x_inc;
+    current_y += y_inc;
   }
 }
 
@@ -127,8 +128,9 @@ void render_color_buffer(void) {
 
 void clear_color_buffer(uint32_t color) {
   for (int y = 0; y < window_height; y++) {
-    for (int x = 0; x < window_width; x++)
-      color_buffer[(window_width * y) + x] = color;
+    for (int x = 0; x < window_width; x++) {
+      color_buffer[window_width * y + x] = color;
+    }
   }
 }
 

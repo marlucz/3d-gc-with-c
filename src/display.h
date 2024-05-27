@@ -5,7 +5,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#define FPS 30
+#define FPS 60
 // how many ms each frame will take
 #define FRAME_TARGET_TIME (1000 / FPS)
 

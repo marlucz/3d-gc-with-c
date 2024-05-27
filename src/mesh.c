@@ -1,5 +1,6 @@
 #include "mesh.h"
 
+#include <stdbool.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -20,27 +21,22 @@ vec3_t cube_vertices[N_CUBE_VERTICES] = {
 };
 
 face_t cube_faces[N_CUBE_FACES] = {
-    // Front
-    {.a = 1, .b = 2, .c = 3, .color = 0xFFFF0000},
-    {.a = 1, .b = 3, .c = 4, .color = 0xFFFF0000},
-
-    // Right
+    // front
+    {.a = 1, .b = 2, .c = 3, .color = 0xFFFFFFFF},
+    {.a = 1, .b = 3, .c = 4, .color = 0xFFFFFFFF},
+    // right
     {.a = 4, .b = 3, .c = 5, .color = 0xFF00FF00},
     {.a = 4, .b = 5, .c = 6, .color = 0xFF00FF00},
-
-    // Back
+    // back
     {.a = 6, .b = 5, .c = 7, .color = 0xFF0000FF},
     {.a = 6, .b = 7, .c = 8, .color = 0xFF0000FF},
-
-    // Left
+    // left
     {.a = 8, .b = 7, .c = 2, .color = 0xFFFF0000},
     {.a = 8, .b = 2, .c = 1, .color = 0xFFFF0000},
-
-    // Top
+    // top
     {.a = 2, .b = 7, .c = 5, .color = 0xFFFFFF00},
     {.a = 2, .b = 5, .c = 3, .color = 0xFFFFFF00},
-
-    // Bottom
+    // bottom
     {.a = 6, .b = 8, .c = 1, .color = 0xFFFF00FF},
     {.a = 6, .b = 1, .c = 4, .color = 0xFFFF00FF}};
 
@@ -55,8 +51,8 @@ void load_cube_mesh_data(void) {
   }
 }
 
-void load_obj_file_data(char *filename) {
-  FILE *file;
+void load_obj_file_data(char* filename) {
+  FILE* file;
   file = fopen(filename, "r");
 
 #define LINE_BUFFER_SIZE 512
