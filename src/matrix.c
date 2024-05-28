@@ -14,16 +14,29 @@ mat4_t mat4_identity(void) {
   return m;
 }
 
-mat4_t mat4_scale(float sx, float sy, float sz) {
-  // | sx 0  0  0 |   | x |   | x'|
-  // | 0  sy 0  0 | X | y | = | y'|
-  // | 0  0  sz 0 |   | z |   | z'|
+mat4_t mat4_make_scale(float sx, float sy, float sz) {
+  // | sx 0  0  0 |   | x |   | x * sx |
+  // | 0  sy 0  0 | X | y | = | y * sy |
+  // | 0  0  sz 0 |   | z |   | z * sz |
   // | 0  0  0  1 |   | 1 |   | 1 |
 
   mat4_t m = mat4_identity();
   m.m[0][0] = sx;
   m.m[1][1] = sy;
   m.m[2][2] = sz;
+  return m;
+}
+
+mat4_t mat4_make_translation(float tx, float ty, float tz) {
+  // | 1 0 0 tx |   | x |   | x + tx |
+  // | 0 1 0 ty | X | y | = | y + ty |
+  // | 0 0 1 tz |   | z |   | z + tz |
+  // | 0 0 0 1  |   | 1 |   | 1 |
+
+  mat4_t m = mat4_identity();
+  m.m[0][3] = tx;
+  m.m[1][3] = ty;
+  m.m[2][3] = tz;
   return m;
 }
 
