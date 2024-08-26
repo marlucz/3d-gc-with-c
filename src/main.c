@@ -5,6 +5,8 @@
 #include "light.h"
 #include "matrix.h"
 #include "mesh.h"
+#include "texture.h"
+#include "triangle.h"
 #include "vector.h"
 
 // pointer in the memory for the array of triangles that should be rendered
@@ -34,9 +36,14 @@ void setup(void) {
   float zfar = 100;
   proj_matrix = mat4_make_perspective(fov, aspect, znear, zfar);
 
+  // Manually load the hardcoded texture data from the static array
+  mesh_texture = (uint32_t *)REDBRICK_TEXTURE;
+  texture_width = 64;
+  texture_height = 64;
+
   // Loads the cube values in the mesh data structure
-  // load_cube_mesh_data();
-  load_obj_file_data("./assets/f22.obj");
+  load_cube_mesh_data();
+  // load_obj_file_data("./assets/f22.obj");
 }
 
 void handle_key_press(SDL_Keycode keycode) {
@@ -55,6 +62,9 @@ void handle_key_press(SDL_Keycode keycode) {
       break;
     case SDLK_4:
       RENDER_VERTICES = !RENDER_VERTICES;
+      break;
+    case SDLK_5:
+      RENDER_TEXTURED = !RENDER_TEXTURED;
       break;
   }
 }
@@ -254,6 +264,12 @@ void update(void) {
                 {projected_points[1].x, projected_points[1].y},
                 {projected_points[2].x, projected_points[2].y},
             },
+        .texcoords =
+            {
+                {mesh_face.a_uv.u, mesh_face.a_uv.v},
+                {mesh_face.b_uv.u, mesh_face.b_uv.v},
+                {mesh_face.c_uv.u, mesh_face.c_uv.v},
+            },
         .color = triangle_color,
         .avg_depth = avg_depth};
 
@@ -310,6 +326,17 @@ void render(void) {
                            triangle.points[2].x, triangle.points[2].y,
                            triangle.color);
     }
+
+    if (RENDER_TEXTURED) {
+      // Draw textured triangle
+      draw_textured_triangle(triangle.points[0].x, triangle.points[0].y,
+                             triangle.texcoords[0].u, triangle.texcoords[0].v,
+                             triangle.points[1].x, triangle.points[1].y,
+                             triangle.texcoords[1].u, triangle.texcoords[1].v,
+                             triangle.points[2].x, triangle.points[2].y,
+                             triangle.texcoords[2].u, triangle.texcoords[2].v);
+    }
+
     if (RENDER_WIREFRAME) {
       // Draw unfilled triangle
       draw_triangle(triangle.points[0].x, triangle.points[0].y,

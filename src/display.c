@@ -14,6 +14,7 @@ bool CULL_BACKFACE = true;
 bool RENDER_WIREFRAME = true;
 bool RENDER_FILL = true;
 bool RENDER_VERTICES = true;
+bool RENDER_TEXTURED = false;
 
 bool initialize_window(void) {
   if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {

@@ -13,6 +13,7 @@ extern bool CULL_BACKFACE;
 extern bool RENDER_WIREFRAME;
 extern bool RENDER_FILL;
 extern bool RENDER_VERTICES;
+extern bool RENDER_TEXTURED;
 
 // extern means that this is external variable defined in the implementation
 // (display.c)
