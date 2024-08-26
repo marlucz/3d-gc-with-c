@@ -16,6 +16,7 @@
   "C_Cpp.vcFormat.indent.braces": false,
   "files.associations": {
     "sdl.h": "c",
-    "stdio.h": "c"
+    "stdio.h": "c",
+    "light.h": "c"
   }
 }
