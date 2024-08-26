@@ -2,6 +2,7 @@
 
 #include "array.h"
 #include "display.h"
+#include "light.h"
 #include "matrix.h"
 #include "mesh.h"
 #include "vector.h"
@@ -34,8 +35,8 @@ void setup(void) {
   proj_matrix = mat4_make_perspective(fov, aspect, znear, zfar);
 
   // Loads the cube values in the mesh data structure
-  load_cube_mesh_data();
-  // load_obj_file_data("./assets/cube.obj");
+  // load_cube_mesh_data();
+  load_obj_file_data("./assets/f22.obj");
 }
 
 void handle_key_press(SDL_Keycode keycode) {
@@ -181,32 +182,32 @@ void update(void) {
       transformed_vertices[j] = transformed_vertex;
     }
 
+    // Backface culling check
+    vec3_t vector_a = vec3_from_vec4(transformed_vertices[0]); /*  A */
+    vec3_t vector_b = vec3_from_vec4(transformed_vertices[1]); /* /\ */
+    vec3_t vector_c = vec3_from_vec4(transformed_vertices[2]); /*C--B*/
+
+    // Get the vector subtraction of B-A and C-A
+    vec3_t vector_ab = vec3_sub(vector_b, vector_a);
+    vec3_t vector_ac = vec3_sub(vector_c, vector_a);
+    vec3_normalize(&vector_ab);
+    vec3_normalize(&vector_ac);
+
+    // Compute and normalize the face normal (using cross product to find
+    // perpendicular)
+    vec3_t normal = vec3_cross(vector_ab, vector_ac);
+    vec3_normalize(
+        &normal);  // & means we're passing a memory reference to that value
+                   // so every operation is done directly on the ref
+
+    // Find the vector between a point in the triangle and the camera origin
+    vec3_t camera_ray = vec3_sub(camera_position, vector_a);
+
+    // Calculate how aligned the camera ray is with the face normal (using dot
+    // product)
+    float dot_normal_camera = vec3_dot(camera_ray, normal);
+
     if (CULL_BACKFACE) {
-      // Backface culling check
-      vec3_t vector_a = vec3_from_vec4(transformed_vertices[0]); /*  A */
-      vec3_t vector_b = vec3_from_vec4(transformed_vertices[1]); /* /\ */
-      vec3_t vector_c = vec3_from_vec4(transformed_vertices[2]); /*C--B*/
-
-      // Get the vector subtraction of B-A and C-A
-      vec3_t vector_ab = vec3_sub(vector_b, vector_a);
-      vec3_t vector_ac = vec3_sub(vector_c, vector_a);
-      vec3_normalize(&vector_ab);
-      vec3_normalize(&vector_ac);
-
-      // Compute and normalize the face normal (using cross product to find
-      // perpendicular)
-      vec3_t normal = vec3_cross(vector_ab, vector_ac);
-      vec3_normalize(
-          &normal);  // & means we're passing a memory reference to that value
-                     // so every operation is done directly on the ref
-
-      // Find the vector between a point in the triangle and the camera origin
-      vec3_t camera_ray = vec3_sub(camera_position, vector_a);
-
-      // Calculate how aligned the camera ray is with the face normal (using dot
-      // product)
-      float dot_normal_camera = vec3_dot(camera_ray, normal);
-
       // bypass the triangles that are looking away from the camera
       if (dot_normal_camera < 0) {
         continue;
@@ -236,6 +237,13 @@ void update(void) {
                        transformed_vertices[2].z) /
                       3.0;
 
+    // calculate light intensity factor based on light direction vector and mesh
+    // face normal vector alignment
+    float light_intensity_factor = -vec3_dot(normal, light.direction);
+    // calculate face new color based on the light intensity factor
+    uint32_t triangle_color =
+        light_apply_intensity(mesh_face.color, light_intensity_factor);
+
     triangle_t projected_triangle = {
         .points =
             {
@@ -243,7 +251,7 @@ void update(void) {
                 {projected_points[1].x, projected_points[1].y},
                 {projected_points[2].x, projected_points[2].y},
             },
-        .color = mesh_face.color,
+        .color = triangle_color,
         .avg_depth = avg_depth};
 
     // Save the projected triangle in the array of triangles to render
