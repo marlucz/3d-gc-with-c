@@ -329,12 +329,12 @@ void render(void) {
 
     if (RENDER_TEXTURED) {
       // Draw textured triangle
-      draw_textured_triangle(triangle.points[0].x, triangle.points[0].y,
-                             triangle.texcoords[0].u, triangle.texcoords[0].v,
-                             triangle.points[1].x, triangle.points[1].y,
-                             triangle.texcoords[1].u, triangle.texcoords[1].v,
-                             triangle.points[2].x, triangle.points[2].y,
-                             triangle.texcoords[2].u, triangle.texcoords[2].v);
+      draw_textured_triangle(
+          triangle.points[0].x, triangle.points[0].y, triangle.texcoords[0].u,
+          triangle.texcoords[0].v, triangle.points[1].x, triangle.points[1].y,
+          triangle.texcoords[1].u, triangle.texcoords[1].v,
+          triangle.points[2].x, triangle.points[2].y, triangle.texcoords[2].u,
+          triangle.texcoords[2].v, mesh_texture);
     }
 
     if (RENDER_WIREFRAME) {
