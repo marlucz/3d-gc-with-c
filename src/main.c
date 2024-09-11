@@ -360,6 +360,7 @@ void render(void) {
 // Free the memory that was dynamically allocated by the program
 void free_resources(void) {
   free(color_buffer);  // free memory, free is opposite of malloc
+  upng_free(png_texture);
   array_free(mesh.faces);
   array_free(mesh.vertices);
   // clear the array of triangles to render every frame loop
