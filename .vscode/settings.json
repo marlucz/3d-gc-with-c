@@ -18,5 +18,6 @@
     "sdl.h": "c",
     "stdio.h": "c",
     "light.h": "c"
-  }
+  },
+  "makefile.configureOnOpen": true
 }
