@@ -7,6 +7,7 @@
 #include "mesh.h"
 #include "texture.h"
 #include "triangle.h"
+#include "upng.h"
 #include "vector.h"
 
 // pointer in the memory for the array of triangles that should be rendered
@@ -36,14 +37,12 @@ void setup(void) {
   float zfar = 100;
   proj_matrix = mat4_make_perspective(fov, aspect, znear, zfar);
 
-  // Manually load the hardcoded texture data from the static array
-  mesh_texture = (uint32_t *)REDBRICK_TEXTURE;
-  texture_width = 64;
-  texture_height = 64;
-
   // Loads the cube values in the mesh data structure
   load_cube_mesh_data();
   // load_obj_file_data("./assets/f22.obj");
+
+  // Load the texture information from an external PNG file
+  load_png_texture_data("./assets/cube.png");
 }
 
 void handle_key_press(SDL_Keycode keycode) {
