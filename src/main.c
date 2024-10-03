@@ -24,6 +24,9 @@ void setup(void) {
   // allocate the required memory in bytes to hold the color buffer
   color_buffer =
       (uint32_t *)malloc(sizeof(uint32_t) * window_width * window_height);
+  z_buffer = (float *)malloc(
+      sizeof(float) * window_width *
+      window_height);  // (float *) -> means casting to float value
 
   // creating an SDL texture that is used to display the color buffer
   color_buffer_texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA32,
@@ -39,10 +42,10 @@ void setup(void) {
 
   // Loads the cube values in the mesh data structure
   // load_cube_mesh_data();
-  load_obj_file_data("./assets/cube.obj");
+  load_obj_file_data("./assets/crab.obj");
 
   // Load the texture information from an external PNG file
-  load_png_texture_data("./assets/cube.png");
+  load_png_texture_data("./assets/crab.png");
 }
 
 void handle_key_press(SDL_Keycode keycode) {
@@ -350,19 +353,22 @@ void render(void) {
     }
   }
 
+  // clear the array of triangles to render every frame loop
+  array_free(triangles_to_render);
+
   render_color_buffer();
   clear_color_buffer(0xFF000000);
+  clear_z_buffer();
   SDL_RenderPresent(renderer);
 }
 
 // Free the memory that was dynamically allocated by the program
 void free_resources(void) {
   free(color_buffer);  // free memory, free is opposite of malloc
+  free(z_buffer);
   upng_free(png_texture);
   array_free(mesh.faces);
   array_free(mesh.vertices);
-  // clear the array of triangles to render every frame loop
-  array_free(triangles_to_render);
 }
 
 int main(int argc, char *argv[]) {
