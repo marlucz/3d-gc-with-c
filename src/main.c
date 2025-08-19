@@ -1,6 +1,7 @@
 #include <math.h>
 
 #include "array.h"
+#include "camera.h"
 #include "display.h"
 #include "light.h"
 #include "matrix.h"
@@ -15,9 +16,12 @@
 triangle_t triangles_to_render[MAX_TRIANGLES_PER_MESH];
 int num_triangles_to_render = 0;
 
-vec3_t camera_position = {.x = 0, .y = 0, .z = 0};
+// vec3_t camera_position = {.x = 0, .y = 0, .z = 0};  // NO NEEDED ANYMORE DUE
+// TO INTRODUCING CAMERA
 
 mat4_t proj_matrix;
+mat4_t world_matrix;
+mat4_t view_matrix;
 
 bool is_running = false;
 int previous_frame_time = 0;
@@ -148,6 +152,15 @@ void update(void) {
   mesh.translation.z = 5.0;
   // mesh.translation.y += 0.005;
 
+  // Change the camera position per animation frame
+  camera.position.x += 0.08;
+  camera.position.y += 0.08;
+
+  // Create the view matrix looking at a hardcoded target point
+  vec3_t target = {0, 0, 4.0};
+  vec3_t up_direction = {0, 1, 0};
+  view_matrix = mat4_look_at(camera.position, target, up_direction);
+
   // Create matrices that will be used to multiply mesh vertices
   mat4_t scale_matrix =
       mat4_make_scale(mesh.scale.x, mesh.scale.y, mesh.scale.z);
@@ -176,7 +189,7 @@ void update(void) {
 
       // Create a World Matrix combining scale, rotation and translation
       // matrices
-      mat4_t world_matrix = mat4_identity();
+      world_matrix = mat4_identity();
       // Multiply all matrices and load the world matrix
       // Order matters. First scale, then rotate, and then translate.
       world_matrix = mat4_mul_mat4(scale_matrix, world_matrix);
@@ -187,6 +200,10 @@ void update(void) {
 
       // Multiply the world matrix by the original vector
       transformed_vertex = mat4_mul_vec4(world_matrix, transformed_vertex);
+
+      // Multiply the view matrix by the vector to transform the scene to camera
+      // space
+      transformed_vertex = mat4_mul_vec4(view_matrix, transformed_vertex);
 
       // transformed_vertex = vec3_rotate_x(transformed_vertex,
       // mesh.rotation.x); transformed_vertex =
@@ -216,7 +233,10 @@ void update(void) {
                    // so every operation is done directly on the ref
 
     // Find the vector between a point in the triangle and the camera origin
-    vec3_t camera_ray = vec3_sub(camera_position, vector_a);
+    vec3_t origin = {0, 0, 0};  // world origin position
+    // vec3_t camera_ray = vec3_sub(camera.position, vector_a); // no more
+    // camera position as it might be translated
+    vec3_t camera_ray = vec3_sub(origin, vector_a);
 
     // Calculate how aligned the camera ray is with the face normal (using dot
     // product)
