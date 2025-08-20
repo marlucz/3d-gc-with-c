@@ -66,7 +66,7 @@ vec3_t vec3_sub(vec3_t a, vec3_t b) {
   vec3_t result = {.x = a.x - b.x, .y = a.y - b.y, .z = a.z - b.z};
   return result;
 }
-vec3_t vec3_mult(vec3_t a, float factor) {
+vec3_t vec3_mul(vec3_t a, float factor) {
   vec3_t result = {.x = a.x * factor, .y = a.y * factor, .z = a.z * factor};
   return result;
 }
